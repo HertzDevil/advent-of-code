@@ -14,9 +14,9 @@ solve do
     field = input.each_line.map(&.chars.map(&.to_i)).to_a
     field.each_with_index.sum do |row, y|
       row.each_with_index.sum do |cell, x|
-        cell < (field.dig?(y, x - 1) || 10) &&
+        (x == 0 || cell < field.dig(y, x - 1)) &&
           cell < (field.dig?(y, x + 1) || 10) &&
-          cell < (field.dig?(y - 1, x) || 10) &&
+          (y == 0 || cell < field.dig(y - 1, x)) &&
           cell < (field.dig?(y + 1, x) || 10) ? cell + 1 : 0
       end
     end
