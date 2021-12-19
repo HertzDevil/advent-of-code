@@ -21,7 +21,7 @@ private class AOCContext
       answer = ""
       t = Time.measure { answer = @answer.call(@input) }
       puts "Answer: `#{answer}`"
-      puts "  Time: #{t.microseconds / 1000.0} ms"
+      puts "  Time: #{t.total_seconds * 1000.0} ms"
     end
 
     puts
