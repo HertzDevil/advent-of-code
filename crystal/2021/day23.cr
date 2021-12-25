@@ -52,6 +52,14 @@ record State4, cells : StaticArray(Cell, 23) do
     ]
   end
 
+  def expected_steps
+    already = stack_slice(1).take_while(&.a?).size +
+      stack_slice(3).take_while(&.b?).size +
+      stack_slice(5).take_while(&.c?).size +
+      stack_slice(7).take_while(&.d?).size
+    32 - already * 2
+  end
+
   private def stack_slice(pos)
     slice = @cells.to_slice[STACK_START[pos], CAPACITY[pos]]
     while slice.last?.try &.none?
@@ -132,13 +140,24 @@ record State4, cells : StaticArray(Cell, 23) do
   end
 end
 
+# part 1 solved by hand
+solve { answer { 15516 } }
+
 solve do
+  test <<-INPUT, 44169
+    #############
+    #...........#
+    ###B#C#B#D###
+      #A#D#C#A#
+      #########
+    INPUT
+
   answer do |input|
     origin = State4.new(input)
     frontier = Set{origin}
     min_scores = {origin => 0}
 
-    32.times do
+    origin.expected_steps.times do |i|
       new_frontier = Set(State4).new
       frontier.each do |state|
         old_score = min_scores[state]
