@@ -57,13 +57,13 @@ macro m_finish
     {% for test_case in AOCMacroContext[:test_cases] %}
       {% input, expected = test_case %}
       {{ AOCMacroContext[:answer].args[0] }} = {{ input }}
-      answer = {{ AOCMacroContext[:answer].body }}
+      answer = begin; {{ AOCMacroContext[:answer].body }}; end
       raise "expected {{ expected }}, got #{answer}" unless answer == {{ expected }}
     {% end %}
 
     fname = __FILE__.gsub(%r(crystal[\\/](\d+)[\\/](day\d+)\.cr\z), "input/\\1/\\2")
     {{ AOCMacroContext[:answer].args[0] }} = read_file(fname)
-    answer = {{ AOCMacroContext[:answer].body }}
+    answer = begin; {{ AOCMacroContext[:answer].body }}; end
     puts "Answer: `#{answer}`"
     AOCMacroContext[:answer] = nil
     AOCMacroContext[:test_cases] = [] of NoReturn
