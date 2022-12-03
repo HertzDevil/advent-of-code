@@ -46,3 +46,39 @@ def solve(*, file = __FILE__, &block)
 ensure
   AOCContext.current = nil
 end
+
+AOCMacroContext = {
+  answer: nil,
+  test_cases: [] of NoReturn,
+}
+
+macro m_finish
+  \{%
+    {% for test_case in AOCMacroContext[:test_cases] %}
+      {% input, expected = test_case %}
+      {{ AOCMacroContext[:answer].args[0] }} = {{ input }}
+      answer = {{ AOCMacroContext[:answer].body }}
+      raise "expected {{ expected }}, got #{answer}" unless answer == {{ expected }}
+    {% end %}
+
+    fname = __FILE__.gsub(%r(crystal[\\/](\d+)[\\/](day\d+)\.cr\z), "input/\\1/\\2")
+    {{ AOCMacroContext[:answer].args[0] }} = read_file(fname)
+    answer = {{ AOCMacroContext[:answer].body }}
+    puts "Answer: `#{answer}`"
+    AOCMacroContext[:answer] = nil
+    AOCMacroContext[:test_cases] = [] of NoReturn
+  %}
+end
+
+macro m_answer(&block)
+  {% AOCMacroContext[:answer] = block %}
+end
+
+macro m_test(input, expected)
+  {% AOCMacroContext[:test_cases] << {input, expected} %}
+end
+
+macro m_solve(&block)
+  {{ block.body }}
+  m_finish
+end
