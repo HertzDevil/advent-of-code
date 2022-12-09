@@ -45,8 +45,8 @@ m_solve do
   m_answer do |input|
     input.split("\n\n")
       .map(&.lines
-            .map(&.to_i)
-            .reduce { |x, y| x + y })
+        .map(&.to_i)
+        .reduce { |x, y| x + y })
       .reduce { |x, y| x > y ? x : y }
   end
 end
@@ -99,8 +99,8 @@ m_solve do
   m_answer do |input|
     input.split("\n\n")
       .map(&.lines
-            .map(&.to_i)
-            .reduce { |x, y| x + y })
+        .map(&.to_i)
+        .reduce { |x, y| x + y })
       .sort
       .[](-3..)
       .reduce { |x, y| x + y }

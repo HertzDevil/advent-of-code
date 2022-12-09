@@ -82,5 +82,3 @@ m_solve do
     }.reduce { |x, y| x + y }
   end
 end
-
-
