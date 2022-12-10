@@ -33,9 +33,9 @@ enum Cell : UInt8
 end
 
 record State4, cells : StaticArray(Cell, 23) do
-  CAPACITY = [2, 4, 1, 4, 1, 4, 1, 4, 2]
+  CAPACITY    = [2, 4, 1, 4, 1, 4, 1, 4, 2]
   STACK_START = CAPACITY.accumulate(0)[..-2]
-  ROOMS = [nil, Cell::A, nil, Cell::B, nil, Cell::C, nil, Cell::D, nil]
+  ROOMS       = [nil, Cell::A, nil, Cell::B, nil, Cell::C, nil, Cell::D, nil]
 
   def initialize(input)
     lines = input.lines
@@ -54,9 +54,9 @@ record State4, cells : StaticArray(Cell, 23) do
 
   def expected_steps
     already = stack_slice(1).take_while(&.a?).size +
-      stack_slice(3).take_while(&.b?).size +
-      stack_slice(5).take_while(&.c?).size +
-      stack_slice(7).take_while(&.d?).size
+              stack_slice(3).take_while(&.b?).size +
+              stack_slice(5).take_while(&.c?).size +
+              stack_slice(7).take_while(&.d?).size
     32 - already * 2
   end
 

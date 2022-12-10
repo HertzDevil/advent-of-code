@@ -1,3 +1,5 @@
+require "colorize"
+
 private class AOCContext
   class_property current : AOCContext?
 
@@ -7,12 +9,27 @@ private class AOCContext
   def initialize(@input : String)
   end
 
-  def run
+  def show_field(io : IO, header, str, color : Colorize::Color = :light_yellow)
+    Colorize.with.white.bold.surround(io) { header.rjust(io, 8); io << ':' }
+    if str.includes?('\n')
+      io << " ```\n"
+      Colorize.with.fore(color).surround(io) { io << str }
+      io << "\n```\n"
+    else
+      io << " `"
+      Colorize.with.fore(color).surround(io) { str.inspect_unquoted(io) }
+      io << "`\n"
+    end
+  end
+
+  def run(io : IO = STDOUT)
     has_failure = false
     test_cases.each do |input, expected|
       got = @answer.call(input)
       unless got == expected
-        puts "Expected `#{input.inspect}` => `#{expected.inspect}`, got `#{got.inspect}`"
+        show_field io, "Input", input
+        show_field io, "Expected", expected, color: :light_green
+        show_field io, "Got", got, color: :light_red
         has_failure = true
       end
     end
@@ -20,11 +37,12 @@ private class AOCContext
     unless has_failure
       answer = ""
       t = Time.measure { answer = @answer.call(@input) }
-      puts "Answer: `#{answer}`"
-      puts "  Time: #{t.total_seconds * 1000.0} ms"
+      show_field io, "Answer", answer
+      Colorize.with.white.bold.surround(io) { io << "    Time:" }
+      io.puts " %.6f ms" % (t.total_seconds * 1000.0)
     end
 
-    puts
+    io.puts
   end
 end
 
@@ -48,7 +66,7 @@ ensure
 end
 
 AOCMacroContext = {
-  answer: nil,
+  answer:     nil,
   test_cases: [] of NoReturn,
 }
 
