@@ -100,3 +100,5 @@ macro m_solve(&block)
   {{ block.body }}
   m_finish
 end
+
+require "./support/*"

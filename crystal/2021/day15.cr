@@ -24,31 +24,18 @@ solve do
     INPUT
 
   answer do |input|
-    field = input.each_line.map(&.chars.map(&.to_i)).to_a
-    h = field.size
-    w = field[0].size
-    reachable = { {0, 0} => 0 }
-    frontier = Set{ {0, 0} }
+    grid = input.each_line
+      .with_index
+      .flat_map { |row, y| row.each_char
+        .with_index
+        .map { |ch, x| {Point2D.new(x, y), ch.to_i} } }
+      .to_h
+    e_v = Point2D.new(grid.each_key.max_of(&.x), grid.each_key.max_of(&.y))
 
-    (1..).each do |d|
-      new_frontier = Set({Int32, Int32}).new
-      frontier.each do |y1, x1|
-        adj(y1, x1, h, w).each do |y2, x2|
-          if !reachable.has_key?({y2, x2}) && d == reachable[{y1, x1}] + field[y2][x2]
-            reachable[{y2, x2}] = d
-            new_frontier << {y2, x2}
-          end
-        end
-      end
-      new_frontier.concat(frontier)
-      frontier = new_frontier.select do |y1, x1|
-        adj(y1, x1, h, w).any? do |y2, x2|
-          !reachable.has_key?({y2, x2})
-        end
-      end
-
-      break d if reachable.has_key?({h - 1, w - 1})
-    end
+    GridBFS.new(grid, VonNeumann2D)
+      .path { |_, _, _, dst, d_old, d| d == d_old + dst }
+      .finish(&.has_key?(e_v))
+      .run(Point2D.new(0, 0))
   end
 end
 
@@ -78,30 +65,15 @@ solve do
         row.map { |v| (v + i - 1) % 9 + 1 }
       end
     end
+    grid = field.each_with_index
+      .flat_map { |row, y| row.each_with_index
+        .map { |ch, x| {Point2D.new(x, y), ch} } }
+      .to_h
+    e_v = Point2D.new(grid.each_key.max_of(&.x), grid.each_key.max_of(&.y))
 
-    h = field.size
-    w = field[0].size
-    reachable = { {0, 0} => 0 }
-    frontier = Set{ {0, 0} }
-
-    (1..).each do |d|
-      new_frontier = Set({Int32, Int32}).new
-      frontier.each do |y1, x1|
-        adj(y1, x1, h, w).each do |y2, x2|
-          if !reachable.has_key?({y2, x2}) && d == reachable[{y1, x1}] + field[y2][x2]
-            reachable[{y2, x2}] = d
-            new_frontier << {y2, x2}
-          end
-        end
-      end
-      new_frontier.concat(frontier)
-      frontier = new_frontier.select do |y1, x1|
-        adj(y1, x1, h, w).any? do |y2, x2|
-          !reachable.has_key?({y2, x2})
-        end
-      end
-
-      break d if reachable.has_key?({h - 1, w - 1})
-    end
+    GridBFS.new(grid, VonNeumann2D)
+      .path { |_, _, _, dst, d_old, d| d == d_old + dst }
+      .finish(&.has_key?(e_v))
+      .run(Point2D.new(0, 0))
   end
 end
