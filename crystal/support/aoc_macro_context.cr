@@ -1,10 +1,13 @@
 AOCMacroContext = {
+  part:       1,
   answer:     nil,
   test_cases: [] of NoReturn,
 }
 
 macro m_finish
   \{%
+    puts "=== Part #{AOCMacroContext[:part]} ==="
+
     {% for test_case in AOCMacroContext[:test_cases] %}
       {% input, expected = test_case %}
       {{ AOCMacroContext[:answer].args[0] }} = {{ input }}
@@ -20,8 +23,11 @@ macro m_finish
     else
       puts "File `#{fname}` does not exist; skipping m_solve"
     end
+
+    puts ""
     AOCMacroContext[:answer] = nil
     AOCMacroContext[:test_cases] = [] of NoReturn
+    AOCMacroContext[:part] += 1
   %}
 end
 

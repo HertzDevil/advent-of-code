@@ -19,9 +19,7 @@ def check_input(fname)
   headers = HTTP::Headers.new
   cookies.add_request_headers(headers)
 
-  HTTP::Client.get("https://adventofcode.com/#{year}/day/#{day}/input", headers: headers) do |io|
-    File.open(fname, "w") do |f|
-      IO.copy(io.body_io, f)
-    end
-  end
+  uri = "https://adventofcode.com/#{year}/day/#{day}/input"
+  input = HTTP::Client.get(uri, headers: headers).body
+  File.write(fname, input)
 end
