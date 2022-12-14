@@ -64,7 +64,7 @@ end
 
 def solve(*, file = __FILE__, &block)
   year, day = file.match(%r(crystal[\\/](\d+)[\\/]day(\d+)\.cr\z)).not_nil!.captures.map(&.not_nil!)
-  fname = File.expand_path("#{file}/../../../input/#{year}/day#{day}")
+  fname = File.expand_path("#{file}/../../../input/#{year}/day#{day}.txt")
   AOCContext.part = part = AOCContext.part + 1
   AOCContext.current = cxt = AOCContext.new(fname, part)
   yield

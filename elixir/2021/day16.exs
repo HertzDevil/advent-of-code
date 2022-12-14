@@ -84,7 +84,7 @@ end
 
 defmodule Main do
   def main do
-    {:ok, input} = File.read(Path.expand("../../input/2021/day16", __DIR__))
+    {:ok, input} = File.read(Path.expand("../../input/2021/day16.txt", __DIR__))
     {packet, _padding} = input |> AoC.to_bits() |> AoC.parse()
     # IO.inspect(packet)
     IO.inspect(packet |> AoC.total_version())

@@ -15,7 +15,7 @@ macro m_finish
       raise "expected {{ expected }}, got #{answer}" unless answer == {{ expected }}
     {% end %}
 
-    fname = __FILE__.gsub(%r(crystal[\\/](\d+)[\\/](day\d+)\.cr\z), "input/\\1/\\2")
+    fname = __FILE__.gsub(%r(crystal[\\/](\d+)[\\/](day\d+)\.cr\z), "input/\\1/\\2.txt")
     if file_exists?(fname)
       {{ AOCMacroContext[:answer].args[0] }} = read_file(fname)
       answer = begin; {{ AOCMacroContext[:answer].body }}; end
