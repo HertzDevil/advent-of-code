@@ -2,7 +2,8 @@ require "./point"
 
 module Neighborhood(P, V)
   abstract def neighbors(v : P, & : P ->)
-  abstract def length(v : V) : Int
+  abstract def sphere(v : P, radius : Int, & : P ->)
+  abstract def norm(v : V) : Int
 
   def neighbors(v : P) : Array(P)
     ws = [] of P
@@ -10,8 +11,14 @@ module Neighborhood(P, V)
     ws
   end
 
+  def sphere(v : P, radius : Int) : Array(P)
+    ws = [] of P
+    sphere(v, radius) { |w| ws << w }
+    ws
+  end
+
   def distance(v : P, w : P) : Int
-    length(v - w)
+    norm(v - w)
   end
 end
 
@@ -25,7 +32,18 @@ module VonNeumann2D
     yield v + Vector2D.new(+0, +1)
   end
 
-  def self.length(v : Vector2D) : Int
+  def self.sphere(v : Point2D, radius : Int, & : Point2D ->)
+    if radius <= 0
+      yield v
+    else
+      (0...radius).each { |i| yield v + Vector2D.new(i, i - radius) }
+      (0...radius).each { |i| yield v + Vector2D.new(radius - i, i) }
+      (0...radius).each { |i| yield v + Vector2D.new(-i, radius - i) }
+      (0...radius).each { |i| yield v + Vector2D.new(i - radius, -i) }
+    end
+  end
+
+  def self.norm(v : Vector2D) : Int
     v.to_tuple.sum(&.abs)
   end
 end
@@ -44,7 +62,18 @@ module Moore2D
     yield v + Vector2D.new(+1, +1)
   end
 
-  def self.length(v : Vector2D) : Int
+  def self.sphere(v : Point2D, radius : Int, & : Point2D ->)
+    if radius <= 0
+      yield v
+    else
+      (-radius...radius).each { |i| yield v + Vector2D.new(i, -radius) }
+      (-radius...radius).each { |i| yield v + Vector2D.new(radius, -i) }
+      (-radius...radius).each { |i| yield v + Vector2D.new(-i, radius) }
+      (-radius...radius).each { |i| yield v + Vector2D.new(-radius, -i) }
+    end
+  end
+
+  def self.norm(v : Vector2D) : Int
     v.to_tuple.max_of(&.abs)
   end
 end

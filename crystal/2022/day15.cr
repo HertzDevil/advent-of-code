@@ -70,23 +70,32 @@ solve do
       {s, b, d}
     end.to_a
 
-    (0..4000000).each do |y|
-      blocked = [] of Range(Int32, Int32)
-      beacons.each do |s, b, d|
-        hdist = d - (s.y - y).abs
-        xmin = s.x - hdist
-        xmax = s.x + hdist
-        next unless xmin <= xmax
-
-        overlap, blocked = blocked.partition { |r2| r2.begin <= xmax + 1 && r2.end >= xmin - 1 }
-        overlap << (xmin..xmax)
-        blocked << (overlap.min_of(&.begin)..overlap.max_of(&.end))
-      end
-
-      if blocked.size > 1
-        x = blocked[0].end + 1
-        return 4000000_u64 * x + y
+    beacons.each do |s1, _, d1|
+      VonNeumann2D.sphere(s1, d1 + 1) do |v|
+        next unless 0 <= v.x <= 4000000 && 0 <= v.y <= 4000000
+        if beacons.all? { |s2, _, d2| VonNeumann2D.distance(v, s2) > d2 }
+          return 4000000_u64 * v.x + v.y
+        end
       end
     end
+
+    # (0..4000000).each do |y|
+    #   blocked = [] of Range(Int32, Int32)
+    #   beacons.each do |s, b, d|
+    #     hdist = d - (s.y - y).abs
+    #     xmin = s.x - hdist
+    #     xmax = s.x + hdist
+    #     next unless xmin <= xmax
+
+    #     overlap, blocked = blocked.partition { |r2| r2.begin <= xmax + 1 && r2.end >= xmin - 1 }
+    #     overlap << (xmin..xmax)
+    #     blocked << (overlap.min_of(&.begin)..overlap.max_of(&.end))
+    #   end
+
+    #   if blocked.size > 1
+    #     x = blocked[0].end + 1
+    #     return 4000000_u64 * x + y
+    #   end
+    # end
   end
 end
