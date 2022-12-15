@@ -1,47 +1,51 @@
-record Point2D, x : Int32, y : Int32
+require "./point"
 
-module Neighborhood(T)
-  abstract def neighbors(v : T, & : T ->)
-  abstract def distance(v : T, w : T) : Int
+module Neighborhood(P, V)
+  abstract def neighbors(v : P, & : P ->)
+  abstract def length(v : V) : Int
 
-  def neighbors(v : T) : Array(T)
-    ws = [] of T
+  def neighbors(v : P) : Array(P)
+    ws = [] of P
     neighbors(v) { |w| ws << w }
     ws
+  end
+
+  def distance(v : P, w : P) : Int
+    length(v - w)
   end
 end
 
 module VonNeumann2D
-  extend Neighborhood(Point2D)
+  extend Neighborhood(Point2D, Vector2D)
 
   def self.neighbors(v : Point2D, & : Point2D ->)
-    yield Point2D.new(x: v.x + 0, y: v.y - 1)
-    yield Point2D.new(x: v.x - 1, y: v.y + 0)
-    yield Point2D.new(x: v.x + 1, y: v.y + 0)
-    yield Point2D.new(x: v.x + 0, y: v.y + 1)
+    yield v + Vector2D.new(+0, -1)
+    yield v + Vector2D.new(-1, +0)
+    yield v + Vector2D.new(+1, +0)
+    yield v + Vector2D.new(+0, +1)
   end
 
-  def self.distance(v : Point2D, w : Point2D) : Int
-    (v.x - w.x).abs + (v.y - w.y).abs
+  def self.length(v : Vector2D) : Int
+    v.to_tuple.sum(&.abs)
   end
 end
 
 module Moore2D
-  extend Neighborhood(Point2D)
+  extend Neighborhood(Point2D, Vector2D)
 
   def self.neighbors(v : Point2D, & : Point2D ->)
-    yield Point2D.new(x: v.x - 1, y: v.y - 1)
-    yield Point2D.new(x: v.x + 0, y: v.y - 1)
-    yield Point2D.new(x: v.x + 1, y: v.y - 1)
-    yield Point2D.new(x: v.x - 1, y: v.y + 0)
-    yield Point2D.new(x: v.x + 1, y: v.y + 0)
-    yield Point2D.new(x: v.x - 1, y: v.y + 1)
-    yield Point2D.new(x: v.x + 0, y: v.y + 1)
-    yield Point2D.new(x: v.x + 1, y: v.y + 1)
+    yield v + Vector2D.new(-1, -1)
+    yield v + Vector2D.new(+0, -1)
+    yield v + Vector2D.new(+1, -1)
+    yield v + Vector2D.new(-1, +0)
+    yield v + Vector2D.new(+1, +0)
+    yield v + Vector2D.new(-1, +1)
+    yield v + Vector2D.new(+0, +1)
+    yield v + Vector2D.new(+1, +1)
   end
 
-  def self.distance(v : Point2D, w : Point2D) : Int
-    {(v.x - w.x).abs, (v.y - w.y).abs}.max
+  def self.length(v : Vector2D) : Int
+    v.to_tuple.max_of(&.abs)
   end
 end
 
@@ -49,7 +53,7 @@ class GridBFS(T, N, V)
   @path_proc = Proc(T, V, T, V, Int32, Int32, Bool).new { |src_v, src, dst_v, dst, d_old, d| false }
   @finish_proc = Proc(Hash(T, Int32), Bool).new { |reachable| false }
 
-  def initialize(@grid : Hash(T, V), @neighborhood : N) # N <= Neighborhood(T)
+  def initialize(@grid : Hash(T, V), @neighborhood : N) # N <= Neighborhood(T, _)
   end
 
   def path(&@path_proc : T, V, T, V, Int32, Int32 -> Bool)

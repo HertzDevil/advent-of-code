@@ -1,5 +1,4 @@
 require "../support"
-require "complex"
 
 solve do
   test "R2, L3", 5
@@ -7,15 +6,15 @@ solve do
   test "R5, L5, R5, R3", 12
 
   answer do |input|
-    z = Complex.zero
-    dir = 1.i
+    v = Point2D.zero
+    dv = Vector2D.new(0, 1)
 
     input.scan(/([LR])(\d+)/) do |m|
-      dir *= m[1] == "R" ? -1.i : 1.i
-      z += m[2].to_i * dir
+      dv = m[1] == "R" ? dv.cw : dv.ccw
+      v += m[2].to_i * dv
     end
 
-    (z.real.abs + z.imag.abs).to_i
+    v.x.abs + v.y.abs
   end
 end
 
@@ -23,15 +22,15 @@ solve do
   test "R8, R4, R4, R8", 4
 
   answer &->(input : String) do
-    x, y = 0, 0
-    dx, dy = 0, 1
-    visited = Set{ {0, 0} }
+    v = Point2D.zero
+    dv = Vector2D.new(0, 1)
+    visited = Set{v}
 
     input.scan(/([LR])(\d+)/) do |m|
-      dx, dy = m[1] == "R" ? {dy, -dx} : {-dy, dx}
+      dv = m[1] == "R" ? dv.cw : dv.ccw
       m[2].to_i.times do
-        x, y = x + dx, y + dy
-        return x.abs + y.abs unless visited.add?({x, y})
+        v += dv
+        return v.x.abs + v.y.abs unless visited.add?(v)
       end
     end
   end

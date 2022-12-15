@@ -1,7 +1,5 @@
 require "../support"
 
-DIRS = {"U" => {0, -1}, "D" => {0, 1}, "L" => {-1, 0}, "R" => {1, 0}}
-
 solve do
   test <<-INPUT, 13
     R 4
@@ -15,20 +13,18 @@ solve do
     INPUT
 
   answer do |input|
-    hx, hy = {0, 0}
-    tx, ty = hx, hy
-    visited = Set{ {tx, ty} }
+    h = Point2D.zero
+    t = h
+    visited = Set{t}
 
     input.scan(/([UDLR]) (\d+)/) do |m|
-      dx, dy = DIRS[m[1]]
+      dh = Vector2D::FROM_STR[m[1]]
       m[2].to_i.times do
-        hx += dx
-        hy += dy
-        if (tx - hx).abs >= 2 || (ty - hy).abs >= 2
-          tx -= (tx - hx).sign
-          ty -= (ty - hy).sign
+        h += dh
+        if (t.x - h.x).abs >= 2 || (t.y - h.y).abs >= 2
+          t -= Vector2D.new(t.x <=> h.x, t.y <=> h.y)
         end
-        visited << {tx, ty}
+        visited << t
       end
     end
 
@@ -60,22 +56,21 @@ solve do
     INPUT
 
   answer do |input|
-    ts = Array.new(10) { {0, 0} }
-    visited = Set{ {0, 0} }
+    ts = Array.new(10) { Point2D.zero }
+    visited = Set{Point2D.zero}
 
     input.scan(/([UDLR]) (\d+)/) do |m|
-      dx, dy = DIRS[m[1]]
+      dt = Vector2D::FROM_STR[m[1]]
       m[2].to_i.times do
-        ts.map_with_index! do |(tx, ty), i|
+        ts.map_with_index! do |t, i|
           if i == 0
-            {tx + dx, ty + dy}
+            t + dt
           else
-            hx, hy = ts[i - 1]
-            if (tx - hx).abs >= 2 || (ty - hy).abs >= 2
-              tx -= (tx - hx).sign
-              ty -= (ty - hy).sign
+            h = ts[i - 1]
+            if (t.x - h.x).abs >= 2 || (t.y - h.y).abs >= 2
+              t -= Vector2D.new(t.x <=> h.x, t.y <=> h.y)
             end
-            {tx, ty}
+            t
           end
         end
         visited << ts[-1]
