@@ -8,6 +8,7 @@ private class AOCContext
   getter part : Int32
   setter solution = Proc(String, String).new { "" }
   getter test_cases = [] of {String, String}
+  getter? test_mode = false
 
   def initialize(@fname : String, @part : Int32)
   end
@@ -28,6 +29,7 @@ private class AOCContext
   def run(io : IO = STDOUT)
     Colorize.with.white.bold.surround(io) { io << "=== Part " << @part << " ===\n" }
 
+    @test_mode = true
     has_failure = false
     test_cases.each do |input, expected|
       got = @solution.call(input)
@@ -38,6 +40,7 @@ private class AOCContext
         has_failure = true
       end
     end
+    @test_mode = false
 
     unless has_failure
       ::check_input(@fname)
@@ -60,6 +63,10 @@ end
 
 def test(input, output)
   AOCContext.current.try &.test_cases.<<({input.to_s, output.to_s})
+end
+
+def test_mode?
+  !!AOCContext.current.try &.test_mode?
 end
 
 def solve(*, file = __FILE__, &block)

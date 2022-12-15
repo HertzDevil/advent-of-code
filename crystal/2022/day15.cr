@@ -21,11 +21,12 @@ solve do
   answer do |input|
     blocked = [] of Range(Int32, Int32)
     has_beacon = Set(Int32).new
+    y = test_mode? ? 10 : 2000000
+
     input.scan(/-?\d+/).each_slice(4) do |(sx, sy, bx, by)|
       s = Point2D.new(sx[0].to_i, sy[0].to_i)
       b = Point2D.new(bx[0].to_i, by[0].to_i)
       d = VonNeumann2D.distance(s, b)
-      y = 10
       has_beacon << b.x if b.y == y
 
       hdist = d - (s.y - y).abs
@@ -70,16 +71,17 @@ solve do
       {s, b, d}
     end.to_a
 
+    bound = test_mode? ? 20 : 4000000
     beacons.each do |s1, _, d1|
       VonNeumann2D.sphere(s1, d1 + 1) do |v|
-        next unless 0 <= v.x <= 4000000 && 0 <= v.y <= 4000000
+        next unless 0 <= v.x <= bound && 0 <= v.y <= bound
         if beacons.all? { |s2, _, d2| VonNeumann2D.distance(v, s2) > d2 }
           return 4000000_u64 * v.x + v.y
         end
       end
     end
 
-    # (0..4000000).each do |y|
+    # (0..(test_mode? ? 20 : 4000000)).each do |y|
     #   blocked = [] of Range(Int32, Int32)
     #   beacons.each do |s, b, d|
     #     hdist = d - (s.y - y).abs
