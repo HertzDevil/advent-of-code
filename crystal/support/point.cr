@@ -193,3 +193,7 @@ struct Point2D
     Point2D.new(@y, -@x)
   end
 end
+
+def_vector Vector3D, Int32, [x, y, z]
+def_point Point3D, Int32, [x, y, z]
+def_affine_methods Point3D, Vector3D, Int32, [x, y, z]
