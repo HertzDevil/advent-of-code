@@ -1,0 +1,7 @@
+#!/bin/sh
+
+case "$1" in
+    crystal)
+        exec crystal run "crystal/$2/day$3.cr"
+        ;;
+esac
