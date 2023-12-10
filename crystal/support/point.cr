@@ -151,28 +151,33 @@ def_point Point2D, Int32, [x, y]
 def_affine_methods Point2D, Vector2D, Int32, [x, y]
 
 struct Vector2D
-  FROM_CHAR = {
-    'U' => Vector2D.new(+0, -1),
-    'D' => Vector2D.new(+0, +1),
-    'L' => Vector2D.new(-1, +0),
-    'R' => Vector2D.new(+1, +0),
+  NORTH = new(+0, -1)
+  SOUTH = new(+0, +1)
+  WEST  = new(-1, +0)
+  EAST  = new(+1, +0)
 
-    'N' => Vector2D.new(+0, -1),
-    'S' => Vector2D.new(+0, +1),
-    'W' => Vector2D.new(-1, +0),
-    'E' => Vector2D.new(+1, +0),
+  FROM_CHAR = {
+    'U' => NORTH,
+    'D' => SOUTH,
+    'L' => WEST,
+    'R' => EAST,
+
+    'N' => NORTH,
+    'S' => SOUTH,
+    'W' => WEST,
+    'E' => EAST,
   }
 
   FROM_STR = {
-    "U" => Vector2D.new(+0, -1),
-    "D" => Vector2D.new(+0, +1),
-    "L" => Vector2D.new(-1, +0),
-    "R" => Vector2D.new(+1, +0),
+    "U" => NORTH,
+    "D" => SOUTH,
+    "L" => WEST,
+    "R" => EAST,
 
-    "N" => Vector2D.new(+0, -1),
-    "S" => Vector2D.new(+0, +1),
-    "W" => Vector2D.new(-1, +0),
-    "E" => Vector2D.new(+1, +0),
+    "N" => NORTH,
+    "S" => SOUTH,
+    "W" => WEST,
+    "E" => EAST,
   }
 
   def cw : Vector2D
