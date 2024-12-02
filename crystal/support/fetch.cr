@@ -12,7 +12,7 @@ def check_input(fname)
   end
 
   FileUtils.mkdir_p(File.dirname(fname))
-  year, day = fname.match(%r(input/(\d+)/day0?(\d+))).not_nil!.captures
+  year, day = fname.match(%r(input[/\\](\d+)[/\\]day0?(\d+))).not_nil!.captures
   puts "Caching input for #{year} day #{day}...".colorize.light_blue
 
   cookies = HTTP::Cookies{HTTP::Cookie.new("session", File.read(token_fname))}
