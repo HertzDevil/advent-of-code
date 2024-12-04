@@ -43,7 +43,7 @@ private macro def_vector(name, coord_type, members)
       )
     end
 
-    def *(other : T) : {{ name }}
+    def *(other : Int) : {{ name }}
       {{ name }}.new(
         {% for m in members %} @{{ m }} * other, {% end %}
       )
