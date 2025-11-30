@@ -73,12 +73,19 @@ solve do
   end
 end
 
-Tally = ->(arr : ArrayLiteral) : HashLiteral {
+Itself = ->(x) { x }
+
+TallyBy = ->(arr : ArrayLiteral, block : ProcLiteral) : HashLiteral {
   tallies = {} of _ => _
   arr.each do |k|
-    tallies[k] = (tallies[k] || 0) + 1
+    value = block.call(k)
+    tallies[value] = (tallies[value] || 0) + 1
   end
   tallies
+}
+
+Tally = ->(arr : ArrayLiteral) : HashLiteral {
+  TallyBy.call(arr, Itself)
 }
 
 m_solve do
