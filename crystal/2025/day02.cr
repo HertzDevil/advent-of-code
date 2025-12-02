@@ -26,21 +26,6 @@ solve do
   end
 end
 
-Log10 = ->(x) {
-  x >= 1000000000 ? 9 :
-    x >= 100000000 ? 8 :
-    x >= 10000000 ? 7 :
-    x >= 1000000 ? 6 :
-    x >= 100000 ? 5 :
-    x >= 10000 ? 4 :
-    x >= 1000 ? 3 :
-    x >= 100 ? 2 :
-    x >= 10 ? 1 : 0
-}
-
-Max = ->(a, b) { a > b ? a : b }
-Min = ->(a, b) { a < b ? a : b }
-
 m_solve do
   m_test <<-INPUT, 1227775554_i64
     11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124
@@ -51,8 +36,8 @@ m_solve do
     input.scan(/(\d+)-(\d+)/).each do |m|
       lo = 0_i64 + m[1].to_i # m[1].to_i(:i64)
       hi = 0_i64 + m[2].to_i
-      lo_digits = Log10.call(lo) + 1
-      hi_digits = Log10.call(hi) + 1
+      lo_digits = M::Math::Log10.call(lo) + 1
+      hi_digits = M::Math::Log10.call(hi) + 1
 
       (lo_digits..hi_digits).each do |digits|
         if digits % 2 == 0
@@ -61,10 +46,10 @@ m_solve do
             mult += 10_i64 ** (digits // 2 * i)
           end
 
-          lo2 = Max.call(lo, 10_i64 ** (digits - 1))
+          lo2 = M::Math::Max.call(lo, 10_i64 ** (digits - 1))
           lo2 += (1_i64 - lo2) % mult - 1
 
-          hi2 = Min.call(hi, 10_i64 ** digits - 1)
+          hi2 = M::Math::Min.call(hi, 10_i64 ** digits - 1)
           hi2 -= hi2 % mult
 
           sum += (lo2 + hi2) * ((hi2 - lo2) // mult + 1) // 2
@@ -117,8 +102,8 @@ m_solve do
     input.scan(/(\d+)-(\d+)/).each do |m|
       lo = 0_i64 + m[1].to_i
       hi = 0_i64 + m[2].to_i
-      lo_digits = Log10.call(lo) + 1
-      hi_digits = Log10.call(hi) + 1
+      lo_digits = M::Math::Log10.call(lo) + 1
+      hi_digits = M::Math::Log10.call(hi) + 1
 
       (lo_digits..hi_digits).each do |digits|
         set = [] of _
@@ -129,10 +114,10 @@ m_solve do
               mult += 10_i64 ** (digits // r * i)
             end
 
-            lo2 = Max.call(lo, 10_i64 ** (digits - 1))
+            lo2 = M::Math::Max.call(lo, 10_i64 ** (digits - 1))
             lo2 += (1_i64 - lo2) % mult - 1
 
-            hi2 = Min.call(hi, 10_i64 ** digits - 1)
+            hi2 = M::Math::Min.call(hi, 10_i64 ** digits - 1)
             hi2 -= hi2 % mult
 
             (lo2 // mult..hi2 // mult).each do |v|
