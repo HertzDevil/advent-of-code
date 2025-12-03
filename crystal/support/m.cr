@@ -25,6 +25,14 @@ module M
     Min = ->(a, b) do
       a < b ? a : b
     end
+
+    FromDigits = ->(digits : ArrayLiteral, base : NumberLiteral) : NumberLiteral do
+      value = 0_i64
+      digits.each_with_index do |digit, i|
+        value += 10_i64 ** i * digit
+      end
+      value
+    end
   end
 
   module Array
@@ -47,10 +55,10 @@ module M
       end
     end
 
-    TallyBy = ->(arr : ArrayLiteral, block : ProcLiteral) : HashLiteral do
+    TallyBy = ->(arr : ArrayLiteral, block : ProcLiteral, data) : HashLiteral do
       tallies = {} of _ => _
       arr.each do |k|
-        value = block.call(k)
+        value = data ? block.call(k, data) : block.call(k)
         tallies[value] = (tallies[value] || 0) + 1
       end
       tallies
@@ -58,6 +66,36 @@ module M
 
     Tally = ->(arr : ArrayLiteral) : HashLiteral do
       ::M::Array::TallyBy.call(arr, ::M::Object::Itself)
+    end
+
+    Max = ->(arr : ArrayLiteral) do
+      arr.reduce do |a, b|
+        a > b ? a : b
+      end
+    end
+
+    Sum = ->(arr : ArrayLiteral, block : ProcLiteral, data) : NumberLiteral do
+      arr.reduce(0_i64) do |acc, v|
+        acc + (block ? (data ? block.call(v, data) : block.call(v)) : v)
+      end
+    end
+
+    Index = ->(arr : ArrayLiteral, value) : NumberLiteral | NilLiteral do
+      index = nil
+      arr.each_with_index do |v, i|
+        index = i if !index && v == value
+      end
+      index
+    end
+
+    ReverseB = ->(arr : ArrayLiteral) do
+      (0...arr.size // 2).each do |i|
+        temp = arr[-i - 1]
+        arr[-i - 1] = arr[i]
+        arr[i] = temp
+        # arr[i], arr[-i - 1] = arr[-i - 1], arr[i]
+      end
+      arr
     end
   end
 end
