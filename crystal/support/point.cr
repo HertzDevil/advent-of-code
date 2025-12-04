@@ -197,6 +197,28 @@ struct Point2D
   def ccw : Point2D
     Point2D.new(@y, -@x)
   end
+
+  def self.grid_from_input(input : String, & : Char -> T) forall T
+    grid = Hash(Point2D, typeof(begin
+      x = uninitialized T
+      x.is_a?(Enumerable::Chunk::Drop) ? raise("") : x
+    end)).new(initial_capacity: input.size)
+
+    input.each_line.with_index do |line, y|
+      line.each_char_with_index do |ch, x|
+        cell = yield ch
+        unless cell.is_a?(Enumerable::Chunk::Drop)
+          grid[Point2D.new(x, y)] = cell
+        end
+      end
+    end
+
+    grid
+  end
+
+  def self.grid_from_input(input : String) : Hash(Point2D, Char)
+    grid_from_input(input, &.itself)
+  end
 end
 
 def_vector Vector3D, Int32, [x, y, z]

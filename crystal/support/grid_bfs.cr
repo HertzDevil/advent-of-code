@@ -25,11 +25,17 @@ end
 module VonNeumann2D
   extend Neighborhood(Point2D, Vector2D)
 
+  OFFSETS = [
+    {+0, -1},
+    {-1, +0},
+    {+1, +0},
+    {+0, +1},
+  ]
+
   def self.neighbors(v : Point2D, & : Point2D ->)
-    yield v + Vector2D.new(+0, -1)
-    yield v + Vector2D.new(-1, +0)
-    yield v + Vector2D.new(+1, +0)
-    yield v + Vector2D.new(+0, +1)
+    {% for v in OFFSETS %}
+      yield v + Vector2D.new({{ v.splat }})
+    {% end %}
   end
 
   def self.sphere(v : Point2D, radius : Int, & : Point2D ->)
@@ -51,15 +57,21 @@ end
 module Moore2D
   extend Neighborhood(Point2D, Vector2D)
 
+  OFFSETS = [
+    {-1, -1},
+    {+0, -1},
+    {+1, -1},
+    {-1, +0},
+    {+1, +0},
+    {-1, +1},
+    {+0, +1},
+    {+1, +1},
+  ]
+
   def self.neighbors(v : Point2D, & : Point2D ->)
-    yield v + Vector2D.new(-1, -1)
-    yield v + Vector2D.new(+0, -1)
-    yield v + Vector2D.new(+1, -1)
-    yield v + Vector2D.new(-1, +0)
-    yield v + Vector2D.new(+1, +0)
-    yield v + Vector2D.new(-1, +1)
-    yield v + Vector2D.new(+0, +1)
-    yield v + Vector2D.new(+1, +1)
+    {% for v in OFFSETS %}
+      yield v + Vector2D.new({{ v.splat }})
+    {% end %}
   end
 
   def self.sphere(v : Point2D, radius : Int, & : Point2D ->)

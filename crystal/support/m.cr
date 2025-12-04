@@ -74,6 +74,12 @@ module M
       end
     end
 
+    Count = ->(arr : ArrayLiteral, block : ProcLiteral, data) : NumberLiteral do
+      arr.reduce(0) do |acc, v|
+        acc + ((data ? block.call(v, data) : block.call(v)) ? 1 : 0)
+      end
+    end
+
     Sum = ->(arr : ArrayLiteral, block : ProcLiteral, data) : NumberLiteral do
       arr.reduce(0_i64) do |acc, v|
         acc + (block ? (data ? block.call(v, data) : block.call(v)) : v)
@@ -90,10 +96,7 @@ module M
 
     ReverseB = ->(arr : ArrayLiteral) do
       (0...arr.size // 2).each do |i|
-        temp = arr[-i - 1]
-        arr[-i - 1] = arr[i]
-        arr[i] = temp
-        # arr[i], arr[-i - 1] = arr[-i - 1], arr[i]
+        arr[i], arr[-i - 1] = arr[-i - 1], arr[i]
       end
       arr
     end
