@@ -74,6 +74,24 @@ module M
       end
     end
 
+    MaxOf = ->(arr : ArrayLiteral, block : ProcLiteral, data) do
+      max = nil
+      arr.each_with_index do |v, i|
+        value = data ? block.call(v, data) : block.call(v)
+        max = value if i == 0 || value > max
+      end
+      max
+    end
+
+    MinOf = ->(arr : ArrayLiteral, block : ProcLiteral, data) do
+      min = nil
+      arr.each_with_index do |v, i|
+        value = data ? block.call(v, data) : block.call(v)
+        min = value if i == 0 || value < min
+      end
+      min
+    end
+
     Count = ->(arr : ArrayLiteral, block : ProcLiteral, data) : NumberLiteral do
       arr.reduce(0) do |acc, v|
         acc + ((data ? block.call(v, data) : block.call(v)) ? 1 : 0)
