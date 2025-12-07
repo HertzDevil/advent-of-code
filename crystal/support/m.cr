@@ -98,9 +98,15 @@ module M
       end
     end
 
-    Sum = ->(arr : ArrayLiteral, block : ProcLiteral, data) : NumberLiteral do
+    Sum = ->(arr : ArrayLiteral, block : ProcLiteral | NilLiteral, data) : NumberLiteral do
       arr.reduce(0_i64) do |acc, v|
         acc + (block ? (data ? block.call(v, data) : block.call(v)) : v)
+      end
+    end
+
+    Product = ->(arr : ArrayLiteral, block : ProcLiteral | NilLiteral, data) : NumberLiteral do
+      arr.reduce(1_i64) do |acc, v|
+        acc * (block ? (data ? block.call(v, data) : block.call(v)) : v)
       end
     end
 
@@ -117,6 +123,32 @@ module M
         arr[i], arr[-i - 1] = arr[-i - 1], arr[i]
       end
       arr
+    end
+
+    Chunks = ->(arr : ArrayLiteral, block : ProcLiteral, data) : ArrayLiteral do
+      chunks = [] of _
+      last_key = nil
+      last_chunk = nil
+
+      arr.each do |v|
+        k = data ? block.call(v, data) : block.call(v)
+        if k == :alone
+          last_key = nil
+          last_chunk = nil
+          chunks << [k, [v]]
+        elsif k == :drop
+          last_key = nil
+          last_chunk = nil
+        elsif last_chunk && k == last_key
+          last_chunk << v
+        else
+          last_key = k
+          last_chunk = [v]
+          chunks << [last_key, last_chunk]
+        end
+      end
+
+      chunks
     end
   end
 end

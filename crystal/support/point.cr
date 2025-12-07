@@ -201,13 +201,13 @@ struct Point2D
   def self.grid_from_input(input : String, & : Char -> T) forall T
     grid = Hash(Point2D, typeof(begin
       x = uninitialized T
-      x.is_a?(Enumerable::Chunk::Drop) ? raise("") : x
+      x.is_a?(Enumerable::Chunk::Drop.class) ? raise("") : x
     end)).new(initial_capacity: input.size)
 
     input.each_line.with_index do |line, y|
       line.each_char_with_index do |ch, x|
         cell = yield ch
-        unless cell.is_a?(Enumerable::Chunk::Drop)
+        unless cell.is_a?(Enumerable::Chunk::Drop.class)
           grid[Point2D.new(x, y)] = cell
         end
       end

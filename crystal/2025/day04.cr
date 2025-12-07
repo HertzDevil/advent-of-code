@@ -80,7 +80,7 @@ solve do
     INPUT
 
   answer do |input|
-    grid = Point2D.grid_from_input(input) { |ch| Enumerable::Chunk::Drop.new if ch == '.' }
+    grid = Point2D.grid_from_input(input) { |ch| Enumerable::Chunk::Drop if ch == '.' }
     count = 0
 
     while true
