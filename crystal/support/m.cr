@@ -5,6 +5,12 @@ module M
     end
   end
 
+  module String
+    ToI64 = ->(str) do
+      0_i64 + parse_type("Foo(#{str.id})").type_vars[0]
+    end
+  end
+
   module Math
     Log10 = ->(x) do
       x >= 1000000000 ? 9 :
@@ -65,7 +71,7 @@ module M
     end
 
     Tally = ->(arr : ArrayLiteral) : HashLiteral do
-      ::M::Array::TallyBy.call(arr, ::M::Object::Itself)
+      ::M::Array::TallyBy.call(arr, ::M::Object::Itself, nil)
     end
 
     Max = ->(arr : ArrayLiteral) do

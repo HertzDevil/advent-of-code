@@ -8,12 +8,14 @@ macro m_finish
   \{%
     puts "=== Part #{AOCMacroContext[:part]} ==="
 
+    m_test_mode = true
     {% for test_case in AOCMacroContext[:test_cases] %}
       {% input, expected = test_case %}
       {{ AOCMacroContext[:answer].args[0] }} = {{ input }}
       answer = begin; {{ AOCMacroContext[:answer].body }}; end
       raise "expected {{ expected }}, got #{answer}" unless answer == {{ expected }}
     {% end %}
+    m_test_mode = false
 
     fname = __FILE__.gsub(%r(crystal[\\/](\d+)[\\/](day\d+)\.cr\z), "input/\\1/\\2.txt")
     if file_exists?(fname)

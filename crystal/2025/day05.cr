@@ -22,10 +22,6 @@ solve do
   end
 end
 
-ToI64 = ->(str) do
-  0_i64 + parse_type("Foo(#{str.id})").type_vars[0]
-end
-
 InRange = ->(v, data) do
   ranges = data
   ranges.any? { |(lo, hi)| lo <= v <= hi }
@@ -48,8 +44,8 @@ m_solve do
 
   m_answer do |input|
     ranges, ids = input.split("\n\n")
-    ranges = ranges.lines.map(&.split('-').map { |v| ToI64.call(v) })
-    M::Array::Count.call(ids.lines.map { |v| ToI64.call(v) }, InRange, ranges)
+    ranges = ranges.lines.map(&.split('-').map { |v| M::String::ToI64.call(v) })
+    M::Array::Count.call(ids.lines.map { |v| M::String::ToI64.call(v) }, InRange, ranges)
   end
 end
 
@@ -116,7 +112,7 @@ m_solve do
 
   m_answer do |input|
     ranges, ids = input.split("\n\n")
-    ranges = ranges.lines.map(&.split('-').map { |v| ToI64.call(v) }).sort_by { |v| (1_i128 << 64) * v[0] + v[1] }
+    ranges = ranges.lines.map(&.split('-').map { |v| M::String::ToI64.call(v) }).sort_by { |v| (1_i128 << 64) * v[0] + v[1] }
 
     vs = nil
     sum = 0_i64

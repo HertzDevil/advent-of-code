@@ -15,12 +15,8 @@ solve do
   end
 end
 
-ToI64 = ->(str) do
-  0_i64 + parse_type("Foo(#{str.id})").type_vars[0]
-end
-
 Problem = ->(row) do
-  (row[-1] == "*" ? M::Array::Product : M::Array::Sum).call(row[..-2].map { |v| ToI64.call(v) }, nil, nil)
+  (row[-1] == "*" ? M::Array::Product : M::Array::Sum).call(row[..-2].map { |v| M::String::ToI64.call(v) }, nil, nil)
 end
 
 m_solve do
