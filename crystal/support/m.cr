@@ -32,6 +32,10 @@ module M
       a < b ? a : b
     end
 
+    Abs = ->(x : NumberLiteral) : NumberLiteral do
+      x >= 0 ? x : -x
+    end
+
     FromDigits = ->(digits : ArrayLiteral, base : NumberLiteral) : NumberLiteral do
       value = 0_i64
       digits.each_with_index do |digit, i|
